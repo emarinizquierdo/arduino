@@ -4,19 +4,17 @@
 #include <SoftwareSerial.h>
 #include "Credentials.h"
 
-// Update these with values suitable for your network.
-//byte server[] = { 192, 168, 0, 195 };
 SoftwareSerial wiSerial(7, 6);
 
 // Update these with values suitable for your network.
-//uint8_t server[] = { 150, 140, 5, 20 };
-char *server = "hermes-nefele.rhcloud.com";
+byte server[] = { 192, 168, 1, 7 };
+//char *server = "hermes-nefele.rhcloud.com";
 
 char *mac;				//wifly mac address
 char channel[30];		//topic to subscribe to (s + mac)
 
 WiFlyClient wiFlyClient;
-PubSubClient client(server, 8000, callback, wiFlyClient);
+PubSubClient client(server, 1883, callback, wiFlyClient);
 
 void callback(char* topic, uint8_t* payload, unsigned int length) {
 	// handle message arrived
