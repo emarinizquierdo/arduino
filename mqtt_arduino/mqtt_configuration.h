@@ -15,6 +15,7 @@
 // Status LED
 #define STATUS_LED 17
 #define STATUS_TOGGLE_TIMEOUT 500
+ #define PLOTTER_TIMEOUT 1000
 #define MQTT_CONNECTED_PIN 13
 #define MQTT_STATUS_DAEMON 3000
 unsigned long statusTimeOut = 0;
@@ -42,7 +43,7 @@ byte statusState = 0;
 
 // ClientId for connecting to MQTT
 #define CLIENT_ID "8567d471-b163-4318"
-#define CLIENT_SECRET "/f27b6108-195a-48e8"
+#define CLIENT_SECRET "/2bd723b4-fe0c-4318"
 
 // Subscribe to topics
 #define S_RX		"ok/tx/#"
@@ -52,8 +53,8 @@ byte statusState = 0;
 #define P_TX		"ok/rx/"
 
 // Status Topic, use to say we are alive or DEAD (will)
-#define S_STATUS "/sloriini/status/8567d471-b163-4318/f27b6108-195a-48e8"
-#define P_STATUS "/sloriini/status/8567d471-b163-4318/f27b6108-195a-48e8"
+#define S_STATUS "/sloriini/status/8567d471-b163-4318/2bd723b4-fe0c-4318"
+#define P_STATUS "/sloriini/status/8567d471-b163-4318/2bd723b4-fe0c-4318"
 #define STATUS_STRING "STATUS"
 #define RUNNING "Running: OKMQTT"
 #define RESTART "Restart: OKMQTT"
@@ -79,7 +80,7 @@ SoftwareSerial wiSerial(XV_RX, XV_TX);
  *
  ****************************************************/
 // WiFly library currently only uses DHCP
- byte server[] = { 192, 168, 1, 7 };
+ byte server[] = { 192, 168, 1, 8 };
 //char *server = "hermes-nefele.rhcloud.com";
 char *mac;				//wifly mac address
 char channel[30];		//topic to subscribe to (s + mac)

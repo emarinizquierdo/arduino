@@ -51,3 +51,22 @@ void statusDaemon(){
 
 	
 }
+
+void sentTemp(){
+
+	int randNumber;
+	String str;
+	char cstr[16];
+
+	if(connected && !tryingConnect && (millis() - timestamp > PLOTTER_TIMEOUT)) {
+		randNumber = random(100);
+		str = String(randNumber);
+  		str.toCharArray(cstr,16);
+
+
+		client.publish("/plotter/draw/8567d471-b163-4318/2bd723b4-fe0c-4318", cstr);
+		Serial.println(cstr);
+	}
+
+	
+}
