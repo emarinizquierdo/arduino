@@ -11,7 +11,8 @@ void setup()
 }
 
 void loop(){
-	statusDaemon();
+	//statusDaemon();
 	sentTemp();
+	client.loop();
 }
 

@@ -10,7 +10,7 @@ void setupWifi(){
 	delay(5000);
 	
 	Serial.begin(XRF_BAUD);
-    wiSerial.begin(XRF_BAUD);
+    wiSerial.begin(XV_BAUD);
 
 	WiFly.setUart(&wiSerial); // Tell the WiFly library that we are not using the SPIUart
 	WiFly.begin();

@@ -20,12 +20,13 @@
 #define MQTT_STATUS_DAEMON 3000
 unsigned long statusTimeOut = 0;
 static unsigned long timestamp = 0;
+static unsigned long plottertimestamp = 0;
 bool tryingConnect = false;
 bool connected = false;
 byte statusState = 0;
 
 // baud rate for the XRF
-#define XRF_BAUD 9600
+#define XRF_BAUD 115200
 
 
 // WiFly RN-XV details
@@ -42,8 +43,8 @@ byte statusState = 0;
 #define MQTT_PORT 1883
 
 // ClientId for connecting to MQTT
-#define CLIENT_ID "8567d471-b163-4318"
-#define CLIENT_SECRET "/2bd723b4-fe0c-4318"
+#define CLIENT_ID "a98a7226-ba29-44d8"
+#define CLIENT_SECRET "/78c42258-2d5f-40c8"
 
 // Subscribe to topics
 #define S_RX		"ok/tx/#"
@@ -53,8 +54,8 @@ byte statusState = 0;
 #define P_TX		"ok/rx/"
 
 // Status Topic, use to say we are alive or DEAD (will)
-#define S_STATUS "/sloriini/status/8567d471-b163-4318/2bd723b4-fe0c-4318"
-#define P_STATUS "/sloriini/status/8567d471-b163-4318/2bd723b4-fe0c-4318"
+#define S_STATUS "/sloriini/status/a98a7226-ba29-44d8/78c42258-2d5f-40c8"
+#define P_STATUS "/sloriini/status/a98a7226-ba29-44d8/78c42258-2d5f-40c8"
 #define STATUS_STRING "STATUS"
 #define RUNNING "Running: OKMQTT"
 #define RESTART "Restart: OKMQTT"
@@ -90,6 +91,6 @@ char channel[30];		//topic to subscribe to (s + mac)
  *
  ****************************************************/
 WiFlyClient wiFlyClient;
-PubSubClient client(server, MQTT_PORT, callback, wiFlyClient);
+PubSubClient client(server, MQTT_PORT, NULL, wiFlyClient);
 
 #endif

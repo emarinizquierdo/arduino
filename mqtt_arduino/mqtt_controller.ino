@@ -41,11 +41,10 @@ void statusDaemon(){
 		connected = false;
 		Serial.println("Client disconnected.");
 		setupWifi();
-	}
-
-	if(connected && !tryingConnect && (millis() - timestamp > MQTT_STATUS_DAEMON)) {
+	}else if(connected && !tryingConnect && (millis() - timestamp > MQTT_STATUS_DAEMON)) {
 		timestamp = millis();
 		client.publish(P_STATUS, "OK");
+		delay(50);
 		Serial.println("Daemon active");
 	}
 
@@ -54,18 +53,33 @@ void statusDaemon(){
 
 void sentTemp(){
 
+	uint8_t output[10];
+	size_t output_len;
+	char* sensorName;
+
 	int randNumber;
 	String str;
-	char cstr[16];
+	char* cstr;
 
-	if(connected && !tryingConnect && (millis() - timestamp > PLOTTER_TIMEOUT)) {
+	if(!tryingConnect && !client.loop()) {
+		digitalWrite(MQTT_CONNECTED_PIN, LOW);
+		connected = false;
+		Serial.println("Client disconnected.");
+		setupWifi();
+	}else if(connected && !tryingConnect && (millis() - plottertimestamp > PLOTTER_TIMEOUT)) {
+		plottertimestamp = millis();
 		randNumber = random(100);
 		str = String(randNumber);
   		str.toCharArray(cstr,16);
 
+  		strcpy((char*)output,"10");
 
-		client.publish("/plotter/draw/8567d471-b163-4318/2bd723b4-fe0c-4318", cstr);
-		Serial.println(cstr);
+  		strcpy(sensorName, "/plotter/draw/a98a7226-ba29-44d8/78c42258-2d5f-40c8");
+
+		client.publish(sensorName, output, 2);
+
+		delay(50);
+		Serial.println("pintando");
 	}
 
 	
