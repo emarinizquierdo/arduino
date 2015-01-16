@@ -3,11 +3,13 @@
 
 void setupWifi(){
 
-	tryingConnect = true;
-	
+	Serial.println("Trying connect to wifi");
+	tryingConnectWifi = true;
+	wifiConnected = false;
+
 	digitalWrite(MQTT_CONNECTED_PIN, LOW);
 
-	delay(5000);
+	delay(1000);
 	
 	Serial.begin(XRF_BAUD);
     wiSerial.begin(XV_BAUD);
@@ -21,7 +23,8 @@ void setupWifi(){
 		setupWifi();
 	}else{
 		Serial.println("Association succeeded.");
-		mqttConnect();
+		wifiConnected = true;
+		tryingConnectWifi = false;
 	}
 
 	

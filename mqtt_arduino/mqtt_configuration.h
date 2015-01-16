@@ -15,14 +15,16 @@
 // Status LED
 #define STATUS_LED 17
 #define STATUS_TOGGLE_TIMEOUT 500
- #define PLOTTER_TIMEOUT 1000
+ #define PLOTTER_TIMEOUT 500
 #define MQTT_CONNECTED_PIN 13
 #define MQTT_STATUS_DAEMON 3000
 unsigned long statusTimeOut = 0;
 static unsigned long timestamp = 0;
 static unsigned long plottertimestamp = 0;
-bool tryingConnect = false;
-bool connected = false;
+bool tryingConnectWifi = false;
+bool tryingConnectBroker = false;
+bool wifiConnected = false;
+bool brokerConnected = false;
 byte statusState = 0;
 
 // baud rate for the XRF

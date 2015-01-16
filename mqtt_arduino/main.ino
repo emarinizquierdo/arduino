@@ -6,13 +6,23 @@ void setup()
 
 	pinMode(MQTT_CONNECTED_PIN,OUTPUT);
 
-	setupWifi();	
+	setupWifi();
 
 }
 
 void loop(){
-	//statusDaemon();
+
+	if(!wifiConnected){
+		setupWifi();
+	}
+
+	if(!brokerConnected){
+		mqttConnect();
+	}
+
+	statusDaemon();
+	
 	sentTemp();
-	client.loop();
+
 }
 

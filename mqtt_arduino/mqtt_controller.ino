@@ -19,35 +19,40 @@ void callback(char* topic, uint8_t* payload, unsigned int length) {
 
 void mqttConnect(){
 
+	Serial.println("Trying connect to MQTT broker");
+	tryingConnectBroker = true;
+
 	if (client.connect(CLIENT_ID)) {
 		digitalWrite(MQTT_CONNECTED_PIN, HIGH);
   		Serial.println("Connected to MQTT Broker");
   		client.publish(P_STATUS, "OK");
-  		connected = true;
-  		tryingConnect = false;
+  		brokerConnected = true;
+  		tryingConnectBroker = false;
 	}
 	else {
-		Serial.println("Connection failed.");
-		connected = false;
-		tryingConnect = false;
-		setupWifi();
+		Serial.println("Connection to MQTT Broker failed.");
+		brokerConnected = false;
+		tryingConnectBroker = false;
 	}
+
 }
 
 void statusDaemon(){
-
-	if(!tryingConnect && !client.loop()) {
-		digitalWrite(MQTT_CONNECTED_PIN, LOW);
-		connected = false;
-		Serial.println("Client disconnected.");
-		setupWifi();
-	}else if(connected && !tryingConnect && (millis() - timestamp > MQTT_STATUS_DAEMON)) {
+/*
+	if(!client.connected()){
+		wifiConnected = false;
+		Serial.println("Wifi is not connected");
+	}
+*/
+	if(!tryingConnectWifi && !tryingConnectBroker && wifiConnected && brokerConnected && (millis() - timestamp > MQTT_STATUS_DAEMON)) {
 		timestamp = millis();
 		client.publish(P_STATUS, "OK");
 		delay(50);
 		Serial.println("Daemon active");
+		if(!client.loop()){
+			brokerConnected = false;
+		}
 	}
-
 	
 }
 
@@ -58,28 +63,50 @@ void sentTemp(){
 	char* sensorName;
 
 	int randNumber;
-	String str;
-	char* cstr;
+	String str, str2;
 
-	if(!tryingConnect && !client.loop()) {
-		digitalWrite(MQTT_CONNECTED_PIN, LOW);
-		connected = false;
-		Serial.println("Client disconnected.");
-		setupWifi();
-	}else if(connected && !tryingConnect && (millis() - plottertimestamp > PLOTTER_TIMEOUT)) {
+
+	if(!tryingConnectWifi &&  !tryingConnectBroker && wifiConnected && brokerConnected && (( millis() - plottertimestamp ) > PLOTTER_TIMEOUT)) {
+
 		plottertimestamp = millis();
 		randNumber = random(100);
 		str = String(randNumber);
-  		str.toCharArray(cstr,16);
+		str2 = "{\"value\":" + str + "}";
 
-  		strcpy((char*)output,"10");
+		// Length (with one extra character for the null terminator)
+		int str_len = str.length() + 1; 
+		int str_len2 = str2.length() + 1; 
 
-  		strcpy(sensorName, "/plotter/draw/a98a7226-ba29-44d8/78c42258-2d5f-40c8");
+		// Prepare the character array (the buffer) 
+		char char_array[str_len];
+		char char_array2[str_len2];
 
-		client.publish(sensorName, output, 2);
+		// Copy it over 
+		str.toCharArray(char_array, str_len);
+		str2.toCharArray(char_array2, str_len2);
 
-		delay(50);
-		Serial.println("pintando");
+
+		client.publish("/simpleLine/draw/a98a7226-ba29-44d8/78c42258-2d5f-40c8", char_array);
+		
+
+		delay(200);
+		Serial.println(char_array);
+
+		if(!client.loop()){
+			Serial.println("el primer loop falla");
+			brokerConnected = false;
+		}
+
+		client.publish("/plotter/draw/a98a7226-ba29-44d8/78c42258-2d5f-40c8", char_array2);
+
+		delay(200);
+		Serial.println(char_array2);
+
+		if(!client.loop()){
+			Serial.println("el segundo loop falla");
+			brokerConnected = false;
+		}
+
 	}
 
 	
