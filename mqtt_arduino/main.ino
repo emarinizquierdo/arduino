@@ -1,5 +1,5 @@
 #include "mqtt_configuration.h"
-
+#include <MemoryFree.h>
 
 void setup()
 {
@@ -23,6 +23,5 @@ void loop(){
 	statusDaemon();
 	
 	sentTemp();
-
 }
 

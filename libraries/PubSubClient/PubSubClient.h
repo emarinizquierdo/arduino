@@ -15,7 +15,8 @@
 #define MQTT_MAX_PACKET_SIZE 128
 
 // MQTT_KEEPALIVE : keepAlive interval in Seconds
-#define MQTT_KEEPALIVE 15
+#define MQTT_KEEPALIVE 60
+#define MQTT_PREVENT_HANGS 1
 
 #define MQTTPROTOCOLVERSION 3
 #define MQTTCONNECT     1 << 4  // Client request to connect to Server
@@ -45,6 +46,7 @@ private:
    uint16_t nextMsgId;
    unsigned long lastOutActivity;
    unsigned long lastInActivity;
+   unsigned long preventHangsOnRead;
    bool pingOutstanding;
    void (*callback)(char*,uint8_t*,unsigned int);
    uint16_t readPacket();

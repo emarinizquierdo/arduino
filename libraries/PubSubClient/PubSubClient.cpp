@@ -83,32 +83,58 @@ boolean PubSubClient::connect(char *id, char* willTopic, uint8_t willQos, uint8_
 }
 
 uint8_t PubSubClient::readByte() {
-   while(!_client->available()) {}
+
+   preventHangsOnRead = millis() + MQTT_PREVENT_HANGS * 1000;
+   bool exit = false;
+
+   while(!_client->available() && !exit) {
+      if(millis() > preventHangsOnRead){
+         exit = true;
+      }
+   }
+   
+   if(exit){
+      return 0;
+   }
+
    return _client->read();
 }
 
 uint16_t PubSubClient::readPacket() {
+
    uint16_t len = 0;
    buffer[len++] = readByte();
    uint8_t multiplier = 1;
    uint16_t length = 0;
    uint8_t digit = 0;
+   
    do {
       digit = readByte();
       buffer[len++] = digit;
-      length += (digit & 127) * multiplier;
-      multiplier *= 128;
-   } while ((digit & 128) != 0);
+   } while (digit != 0 && (len < MQTT_MAX_PACKET_SIZE));
    
-   for (uint16_t i = 0;i<length;i++)
-   {
-      if (len < MQTT_MAX_PACKET_SIZE) {
-         buffer[len++] = readByte();
-      } else {
-         readByte();
-         len = 0; // This will cause the packet to be ignored.
-      }
+   if(len >= MQTT_MAX_PACKET_SIZE){
+      len = 0;
+      return len;
    }
+
+   /*
+   if(length >= 0){
+      for (uint16_t i = 0;i<length;i++)
+      {
+         Serial.println(length);
+         Serial.println(i);
+         if (len < MQTT_MAX_PACKET_SIZE) {
+            buffer[len++] = readByte();
+         } else {
+            Serial.println("olfateando readbyte");
+            readByte();
+            len = 0; // This will cause the packet to be ignored.
+         }
+      }
+   }else{
+      Serial.println("se ha prevenido el bucle");
+   }*/
 
    return len;
 }
