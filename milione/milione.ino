@@ -114,7 +114,7 @@ void loop()
   int uS = sonar.ping();
 
  
-    if((uS / US_ROUNDTRIP_CM) < 50){
+    if((uS / US_ROUNDTRIP_CM) < 25){
       stop();
       derecha();
     }else{
